@@ -1,14 +1,12 @@
-import { checkDirentExist } from './check-dirent-exist.js';
+import { checkDirentExist } from './checkDirentExist.js';
 import { readdir } from 'fs/promises';
 
 export const list = async (folderPath) => {
-  const errorMessage = 'Operation failed';
-
   try {
     const isFolderExist = await checkDirentExist(folderPath);
 
     if (!isFolderExist) {
-      throw new Error(errorMessage);
+      throw new Error(`${ERROR_MESSAGE}: directory doesn't exist!`);
     } else {
       const dirents = await readdir(folderPath, { withFileTypes: true });
       const result = dirents.map((dirent) => dirent.name);

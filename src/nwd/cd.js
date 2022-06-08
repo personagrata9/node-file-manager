@@ -1,10 +1,10 @@
 import * as path from 'path';
 import { goUp } from './up.js';
-import { checkDirentExist } from './check-dirent-exist.js';
+import { checkDirentExist } from './checkDirentExist.js';
 import { stat } from 'fs/promises';
+import { ERROR_MESSAGE } from '../constants.js/errorMessage.js';
 
 export const goToFolder = async (currentDir, dirPath) => {
-  const errorMessage = 'Operation failed';
   const rootDir = path.parse(process.cwd()).root;
   let newDir;
 
@@ -26,13 +26,13 @@ export const goToFolder = async (currentDir, dirPath) => {
 
     if (!isDirentExist) {
       newDir = currentDir;
-      throw new Error(errorMessage);
+      throw new Error(`${ERROR_MESSAGE}: directory doesn't exist!`);
     } else {
       const newDirStat = await stat(newDir);
       
       if (!newDirStat.isDirectory()) {
         newDir = currentDir;
-        throw new Error(errorMessage);
+        throw new Error(`${ERROR_MESSAGE}: not a directory!`);
       } else {
         newDir = path.resolve(newDir);
       }
