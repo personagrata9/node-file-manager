@@ -1,4 +1,4 @@
-import { checkDirentExist } from './checkDirentExist.js';
+import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { readdir } from 'fs/promises';
 import { ERROR_MESSAGE } from '../constants/errorMessage.js';
 
