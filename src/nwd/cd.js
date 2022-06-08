@@ -2,13 +2,17 @@ import * as path from 'path';
 import { goUp } from './up.js';
 import { checkDirentExist } from './checkDirentExist.js';
 import { stat } from 'fs/promises';
-import { ERROR_MESSAGE } from '../constants.js/errorMessage.js';
+import { ERROR_MESSAGE } from '../constants/errorMessage.js';
 
 export const goToFolder = async (currentDir, dirPath) => {
   const rootDir = path.parse(process.cwd()).root;
   let newDir;
 
   try {
+    if (!dirPath) {
+      throw new Error(`${ERROR_MESSAGE}: no path! Enter command in format cd path_to_directory!`)
+    }
+    
     if (dirPath.startsWith(rootDir)) {
       newDir = dirPath;
     } else {

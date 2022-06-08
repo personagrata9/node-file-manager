@@ -1,5 +1,6 @@
 import { checkDirentExist } from './checkDirentExist.js';
 import { readdir } from 'fs/promises';
+import { ERROR_MESSAGE } from '../constants/errorMessage.js';
 
 export const list = async (folderPath) => {
   try {
