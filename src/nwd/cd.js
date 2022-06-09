@@ -1,35 +1,35 @@
-import { homedir } from 'os';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
-import { stat } from 'fs/promises';
+import { checkDirExist } from '../utils/checkDirExist.js';
+import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
 import { ERROR_MESSAGE } from '../constants/errorMessage.js';
 
-export const goToDir = async (currentDir, direntPath) => {
-  let newDir;
+export const goToDir = async (currentDirPath, args) => {
+  let newDirPath;
 
   try {
-    if (!direntPath || direntPath === '~') {
-      newDir = homedir();
+    if (args.length !== 1) {
+      newDirPath = currentDirPath;
+      throw new Error(INVALID_INPUT_MESSAGE);
     } else {
-      newDir = getAbsolutePath(currentDir, direntPath);
-
-      const isDirentExist = await checkDirentExist(newDir);
+      const dirPath = args[0];
+      const absoluteDirPath = getAbsolutePath(currentDirPath, dirPath);
+      const isDirentExist = await checkDirentExist(absoluteDirPath);
+      const isDirectory = await checkDirExist(absoluteDirPath);
 
       if (!isDirentExist) {
-        newDir = currentDir;
-        throw new Error(`${ERROR_MESSAGE}: directory doesn't exist!`);
+        newDirPath = currentDirPath;
+        throw new Error(`${ERROR_MESSAGE}: ${absoluteDirPath} doesn't exist!`);
+      } else if (!isDirectory) {
+        newDirPath = currentDirPath;
+        throw new Error(`${ERROR_MESSAGE}: ${absoluteDirPath} not a directory!`);
       } else {
-        const newDirStat = await stat(newDir);
-      
-        if (!newDirStat.isDirectory()) {
-          newDir = currentDir;
-          throw new Error(`${ERROR_MESSAGE}: not a directory!`);
-        }
+        newDirPath = absoluteDirPath;
       }
     }
   } catch (error) {
     console.error(error.message);
   }
 
-  return newDir;
+  return newDirPath;
 }

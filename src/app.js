@@ -1,18 +1,17 @@
-import { getUserName } from './general/getUserName.js';
 import { homedir } from 'os';
-import * as path from 'path';
+import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { fork } from 'child_process';
-
+import { getUserName } from './general/getUserName.js';
 
 const startApp = () => {
   const args = process.argv.slice(2);
   const userName = getUserName(args);
   const welcomeMessage = `Welcome to the File Manager, ${userName}!\n`;
-  const exitMessage = `Thank you for using File Manager, ${userName}!\n`
+  const exitMessage = `\nThank you for using File Manager, ${userName}!\n`
 
   const __dirname = fileURLToPath(new URL('.', import.meta.url));
-  const childPath = path.join(__dirname, 'general', 'parseCli.js');
+  const childPath = join(__dirname, 'general', 'parseCli.js');
 
   process.stdout.write(`${welcomeMessage}\n`);
 
