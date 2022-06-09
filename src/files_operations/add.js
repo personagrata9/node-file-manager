@@ -6,7 +6,7 @@ import { ERROR_MESSAGE } from '../constants/errorMessage.js';
 
 export const createFile = async (currentDirPath, args) => {
   try {
-    if (!args.length || args.length > 1) {
+    if (args.length !== 1) {
       throw new Error(INVALID_INPUT_MESSAGE);
     } else {
       const newFileName = args[0];

@@ -20,7 +20,7 @@ const getFileContent = (filePath) => {
 
 export const readFile = async (currentDirPath, args) => {
   try {
-    if (!args.length || args.length > 1) {
+    if (args.length !== 1) {
       throw new Error(INVALID_INPUT_MESSAGE);
     } else {
       const filePath = args[0];

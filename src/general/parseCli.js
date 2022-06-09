@@ -10,13 +10,12 @@ import { moveFile } from '../files_operations/mv.js';
 import { deleteFile } from '../files_operations/rm.js';
 import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
 
-let currentDirPath = process.cwd();
-
-const parseCli = async (input) => {
+export const parseCli = async (input) => {
   const inputStringified = input.toString().trim();
   const inputArray = inputStringified.split(' ');
   const command = inputArray[0];
   const args = inputArray.slice(1);
+  let currentDirPath = process.cwd();
 
   switch (command) {
     case '.exit':
@@ -53,7 +52,5 @@ const parseCli = async (input) => {
       console.error(`${INVALID_INPUT_MESSAGE}: command not found!`);
   }
 
-  process.stdout.write(`\nYou are currently in ${currentDirPath}\n`);
+  return currentDirPath;
 };
-
-process.stdin.on('data', parseCli);

@@ -32,4 +32,4 @@ export const goToDir = async (currentDirPath, args) => {
   }
 
   return newDirPath;
-}
+};

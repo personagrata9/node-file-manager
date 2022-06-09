@@ -8,7 +8,7 @@ import { ERROR_MESSAGE } from '../constants/errorMessage.js';
 
 export const deleteFile = async (currentDirPath, args, move) => {
   try {
-    if (!args.length || args.length > 1) {
+    if (args.length !== 1) {
       throw new Error(INVALID_INPUT_MESSAGE);
     } else {
       const filePath = args[0];
@@ -31,4 +31,4 @@ export const deleteFile = async (currentDirPath, args, move) => {
   } catch (error) {
     if (!move) console.error(error.message);
   }
-}
+};

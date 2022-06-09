@@ -1,8 +1,8 @@
 import { homedir } from 'os';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { fork } from 'child_process';
 import { getUserName } from './general/getUserName.js';
+
+import * as readline from 'readline';
+import { parseCli } from './general/parseCli.js';
 
 const startApp = () => {
   const args = process.argv.slice(2);
@@ -10,22 +10,28 @@ const startApp = () => {
   const welcomeMessage = `Welcome to the File Manager, ${userName}!\n`;
   const exitMessage = `\nThank you for using File Manager, ${userName}!\n`
 
-  const __dirname = fileURLToPath(new URL('.', import.meta.url));
-  const childPath = join(__dirname, 'general', 'parseCli.js');
-
   process.stdout.write(`${welcomeMessage}\n`);
 
   process.chdir(homedir());
   process.stdout.write(`You are currently in ${process.cwd()}\n`);
 
-  fork(childPath);
-
-  process.on('exit', () => {
-    process.stdout.write(exitMessage);
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
   });
 
-  process.on('SIGINT', () => {
-    process.exit();
+  rl.prompt();
+
+  rl.on('line', async (input) => {
+    const currentDirPath = await parseCli(input);
+    process.chdir(currentDirPath);
+    process.stdout.write(`\nYou are currently in ${process.cwd()}\n`);
+
+    rl.prompt();
+  });
+
+  rl.on('close', () => {
+    process.stdout.write(exitMessage);
   });
 };
 
