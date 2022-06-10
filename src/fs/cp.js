@@ -1,13 +1,16 @@
 import { parse, dirname, join }  from 'path';
 import { createReadStream, createWriteStream } from 'fs';
+import { pipeline } from 'stream/promises';
+import { rm } from 'fs/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
 import { checkDirExist } from '../utils/checkDirExist.js';
-import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
-import { ERROR_MESSAGE } from '../constants/errorMessage.js';
+import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const copyFile = async (currentDirPath, args, move) => {
+export const copyFile = async (currentDirPath, args, options) => {
+  const { move } = options;
+  
   try {
     if (args.length !== 2) {
       throw new Error(INVALID_INPUT_MESSAGE);
@@ -40,12 +43,15 @@ export const copyFile = async (currentDirPath, args, move) => {
       } else {
         const rs = createReadStream(absoluteSrcPath);
         const ws = createWriteStream(absoluteDestPath);
-          
-        rs.pipe(ws);
+        
+        await pipeline(
+          rs,
+          ws);
 
         if (!move) {
           console.log(`File ${srcFileName} was successfully copied from directory ${srcDirName} to directory ${absoluteNewDirPath}!`);
         } else {
+          await rm(absoluteSrcPath);
           console.log(`File ${srcFileName} was successfully moved from directory ${srcDirName} to directory ${absoluteNewDirPath}!`);
         }
       }

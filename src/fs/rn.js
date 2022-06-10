@@ -3,8 +3,7 @@ import { rename } from 'fs/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
-import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
-import { ERROR_MESSAGE } from '../constants/errorMessage.js';
+import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
 export const renameFile = async (currentDirPath, args) => {
   try {

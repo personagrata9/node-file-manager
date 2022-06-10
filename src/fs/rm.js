@@ -3,10 +3,9 @@ import { rm } from 'fs/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
-import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
-import { ERROR_MESSAGE } from '../constants/errorMessage.js';
+import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const deleteFile = async (currentDirPath, args, move) => {
+export const deleteFile = async (currentDirPath, args) => {
   try {
     if (args.length !== 1) {
       throw new Error(INVALID_INPUT_MESSAGE);
@@ -25,10 +24,10 @@ export const deleteFile = async (currentDirPath, args, move) => {
         throw new Error(`${ERROR_MESSAGE}: ${fileName} is not a file!`);
       } else {
         await rm(absoluteFilePath);
-        if (!move) console.log(`File ${fileName} was successfully deleted from ${dirName}!`);
+        console.log(`File ${fileName} was successfully deleted from ${dirName}!`);
       }
     }
   } catch (error) {
-    if (!move) console.error(error.message);
+    console.error(error.message);
   }
 };

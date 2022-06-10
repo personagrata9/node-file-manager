@@ -1,5 +1,5 @@
 import { dirname } from 'path';
-import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
+import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
 export const goUp = (currentDirPath, args) => {
   let newDirPath;

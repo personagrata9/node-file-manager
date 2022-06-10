@@ -1,7 +1,6 @@
 import { readdir } from 'fs/promises';
 import { checkDirExist } from '../utils/checkDirExist.js';
-import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
-import { ERROR_MESSAGE } from '../constants/errorMessage.js';
+import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
 export const list = async (currentDirPath, args) => {
   try {

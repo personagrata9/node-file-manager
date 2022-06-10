@@ -2,14 +2,14 @@ import { exit } from './exit.js';
 import { goUp } from '../nwd/up.js';
 import { goToDir } from '../nwd/cd.js';
 import { list } from '../nwd/ls.js';
-import { readFile } from '../files_operations/cat.js';
-import { createFile } from '../files_operations/add.js';
-import { renameFile } from '../files_operations/rn.js';
-import { copyFile } from '../files_operations/cp.js';
-import { moveFile } from '../files_operations/mv.js';
-import { deleteFile } from '../files_operations/rm.js';
+import { readFile } from '../fs/cat.js';
+import { createFile } from '../fs/add.js';
+import { renameFile } from '../fs/rn.js';
+import { copyFile } from '../fs/cp.js';
+import { deleteFile } from '../fs/rm.js';
 import { printOsInfo } from '../os/printOsInfo.js';
-import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
+import { printHash } from '../hash/printHash.js';
+import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
 export const parseCli = async (input) => {
   const inputStringified = input.toString().trim();
@@ -41,16 +41,19 @@ export const parseCli = async (input) => {
       await renameFile(currentDirPath, args);
       break;
     case 'cp':
-      await copyFile(currentDirPath, args, false);
+      await copyFile(currentDirPath, args, { move: false });
       break;
     case 'mv':
-      await moveFile(currentDirPath, args);
+      await copyFile(currentDirPath, args, { move: true });;
       break;
     case 'rm':
-      await deleteFile(currentDirPath, args, false);
+      await deleteFile(currentDirPath, args);
       break;
     case 'os':
       printOsInfo(args);
+      break;
+    case 'hash':
+      await printHash(currentDirPath, args);
       break;
     default:
       console.error(`${INVALID_INPUT_MESSAGE}: command not found!`);

@@ -1,4 +1,4 @@
-import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
+import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
 export const exit = (args) => {
   if (args.length) {
