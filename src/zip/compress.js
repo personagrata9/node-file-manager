@@ -5,7 +5,8 @@ import { pipeline } from 'stream/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
-import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
+import { validateFileName } from '../utils/validateFileName.js';
+import { ERROR_MESSAGE, INVALID_FILE_NAME_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
 export const compress = async (command, currentDirPath, args) => {
   try {
@@ -29,6 +30,7 @@ export const compress = async (command, currentDirPath, args) => {
       const isSrcExist = await checkDirentExist(absoluteSrcPath);
       const isSrcFile = await checkFileExist(absoluteSrcPath);
       const isDestDirExist = await checkDirentExist(absoluteDestDirPath);
+      const isDestFileNameValid = validateFileName(destFileName);
       const isDestFileExist = await checkDirentExist(absoluteDestFilePath);
 
       if (!isSrcExist) {
@@ -37,10 +39,12 @@ export const compress = async (command, currentDirPath, args) => {
         throw new Error(`${ERROR_MESSAGE}: ${srcFileName} is not a file!`);
       } else if (!isDestDirExist) {
         throw new Error(`${ERROR_MESSAGE}: directory ${absoluteDestDirPath} doesn't exist!`);
-      } else if (isDestFileExist) {
-        throw new Error(`${ERROR_MESSAGE}: file ${destFileName} is already exist in directory${absoluteDestDirPath}!`);
+      } else if (!isDestFileNameValid) {
+        throw new Error(INVALID_FILE_NAME_MESSAGE);
       } else if (destExtName !== extName || destBaseExtName !== srcExtName) {
         throw new Error(`${ERROR_MESSAGE}: destination file extension shoud be ${srcExtName}${extName}!`);
+      } else if (isDestFileExist) {
+        throw new Error(`${ERROR_MESSAGE}: file ${destFileName} is already exist in directory${absoluteDestDirPath}!`);
       } else {
         const rs = createReadStream(absoluteSrcPath);
         const ws = createWriteStream(absoluteDestFilePath);

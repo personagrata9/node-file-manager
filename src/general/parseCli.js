@@ -1,3 +1,4 @@
+import { parseArgs } from './parseArgs.js';
 import { exit } from './exit.js';
 import { goUp } from '../nwd/up.js';
 import { goToDir } from '../nwd/cd.js';
@@ -17,7 +18,9 @@ export const parseCli = async (input) => {
   const inputStringified = input.toString().trim();
   const inputArray = inputStringified.split(' ');
   const command = inputArray[0];
-  const args = inputArray.slice(1);
+  const argsArray = inputArray.slice(1);
+  const args = parseArgs(argsArray);
+
   let currentDirPath = process.cwd();
 
   switch (command) {
