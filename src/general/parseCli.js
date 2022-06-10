@@ -9,6 +9,8 @@ import { copyFile } from '../fs/cp.js';
 import { deleteFile } from '../fs/rm.js';
 import { printOsInfo } from '../os/printOsInfo.js';
 import { printHash } from '../hash/printHash.js';
+import { compress } from '../zip/compress.js';
+import { decompress } from '../zip/decompress.js';
 import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
 export const parseCli = async (input) => {
@@ -54,6 +56,12 @@ export const parseCli = async (input) => {
       break;
     case 'hash':
       await printHash(currentDirPath, args);
+      break;
+    case 'compress':
+      await compress(currentDirPath, args);
+      break;
+    case 'decompress':
+      await decompress(currentDirPath, args);
       break;
     default:
       console.error(`${INVALID_INPUT_MESSAGE}: command not found!`);
