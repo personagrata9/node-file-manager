@@ -1,4 +1,4 @@
-import { parse } from 'path';
+import { basename } from 'path';
 import { createReadStream } from 'fs';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
@@ -24,14 +24,14 @@ const calculateHash = (filePath) => {
   });
 };
 
-export const printHash = async (currentDirPath, args) => {
+export const printHash = async (command, currentDirPath, args) => {
   try {
     if (args.length !== 1) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects one argument!`);
     } else {
       const filePath = args[0];
       const absoluteFilePath = getAbsolutePath(currentDirPath, filePath);
-      const fileName = parse(absoluteFilePath).base;
+      const fileName = basename(absoluteFilePath);
 
       const isFileExist = await checkDirentExist(absoluteFilePath);
       const isFile = await checkFileExist(absoluteFilePath);

@@ -1,19 +1,19 @@
-import { dirname, parse } from 'path';
+import { dirname, basename } from 'path';
 import { rm } from 'fs/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const deleteFile = async (currentDirPath, args) => {
+export const deleteFile = async (command, currentDirPath, args) => {
   try {
     if (args.length !== 1) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects one argument!`);
     } else {
       const filePath = args[0];
       const absoluteFilePath = getAbsolutePath(currentDirPath, filePath);
       const dirName = dirname(absoluteFilePath);
-      const fileName = parse(absoluteFilePath).base;
+      const fileName = basename(absoluteFilePath);
 
       const isFileExist = await checkDirentExist(absoluteFilePath);
       const isFile = await checkFileExist(absoluteFilePath);

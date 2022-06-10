@@ -1,19 +1,19 @@
-import { dirname, parse, join } from 'path';
+import { dirname, basename, join } from 'path';
 import { rename } from 'fs/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const renameFile = async (currentDirPath, args) => {
+export const renameFile = async (command, currentDirPath, args) => {
   try {
     if (args.length !== 2) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects two arguments!`);
     } else {
       const filePath = args[0];
       const absoluteFilePath = getAbsolutePath(currentDirPath, filePath);
       const dirName = dirname(absoluteFilePath);
-      const fileName = parse(absoluteFilePath).base;
+      const fileName = basename(absoluteFilePath);
 
       const newFileName = args[1];
       const absoluteNewFilePath = join(dirName, newFileName);

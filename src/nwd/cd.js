@@ -3,13 +3,13 @@ import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkDirExist } from '../utils/checkDirExist.js';
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const goToDir = async (currentDirPath, args) => {
+export const goToDir = async (command, currentDirPath, args) => {
   let newDirPath;
 
   try {
     if (args.length !== 1) {
       newDirPath = currentDirPath;
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects one argument!`);
     } else {
       const dirPath = args[0];
       const absoluteDirPath = getAbsolutePath(currentDirPath, dirPath);

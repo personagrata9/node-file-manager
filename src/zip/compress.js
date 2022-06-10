@@ -7,10 +7,10 @@ import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const compress = async (currentDirPath, args) => {
+export const compress = async (command, currentDirPath, args) => {
   try {
     if (args.length !== 2) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects two arguments!`);
     } else {
       const srcFilePath = args[0];
       const absoluteSrcPath = getAbsolutePath(currentDirPath, srcFilePath);

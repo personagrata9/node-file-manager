@@ -22,46 +22,46 @@ export const parseCli = async (input) => {
 
   switch (command) {
     case '.exit':
-      exit(args);
+      exit(command, args);
       break;
     case 'up':
-      currentDirPath = goUp(currentDirPath, args);
+      currentDirPath = goUp(command, currentDirPath, args);
       break;
     case 'cd':
-      currentDirPath = await goToDir(currentDirPath, args);
+      currentDirPath = await goToDir(command, currentDirPath, args);
       break;
     case 'ls':
-      await list(currentDirPath, args);
+      await list(command, currentDirPath, args);
       break;
     case 'cat':
-      await readFile(currentDirPath, args);
+      await readFile(command, currentDirPath, args);
       break;
     case 'add':
-      await createFile(currentDirPath, args);
+      await createFile(command, currentDirPath, args);
       break;
     case 'rn':
-      await renameFile(currentDirPath, args);
+      await renameFile(command, currentDirPath, args);
       break;
     case 'cp':
-      await copyFile(currentDirPath, args, { move: false });
+      await copyFile(command, currentDirPath, args, { move: false });
       break;
     case 'mv':
-      await copyFile(currentDirPath, args, { move: true });;
+      await copyFile(command, currentDirPath, args, { move: true });;
       break;
     case 'rm':
-      await deleteFile(currentDirPath, args);
+      await deleteFile(command, currentDirPath, args);
       break;
     case 'os':
-      printOsInfo(args);
+      printOsInfo(command, args);
       break;
     case 'hash':
-      await printHash(currentDirPath, args);
+      await printHash(command, currentDirPath, args);
       break;
     case 'compress':
-      await compress(currentDirPath, args);
+      await compress(command, currentDirPath, args);
       break;
     case 'decompress':
-      await decompress(currentDirPath, args);
+      await decompress(command, currentDirPath, args);
       break;
     default:
       console.error(`${INVALID_INPUT_MESSAGE}: command not found!`);

@@ -3,10 +3,10 @@ import { createWriteStream } from 'fs';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const createFile = async (currentDirPath, args) => {
+export const createFile = async (command, currentDirPath, args) => {
   try {
     if (args.length !== 1) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects one argument!`);
     } else {
       const newFileName = args[0];
       const newFilePath = join(currentDirPath, newFileName);

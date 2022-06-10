@@ -1,4 +1,4 @@
-import { parse, dirname, join }  from 'path';
+import { dirname, basename, join }  from 'path';
 import { createReadStream, createWriteStream } from 'fs';
 import { pipeline } from 'stream/promises';
 import { rm } from 'fs/promises';
@@ -8,17 +8,17 @@ import { checkFileExist } from '../utils/checkFileExist.js';
 import { checkDirExist } from '../utils/checkDirExist.js';
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const copyFile = async (currentDirPath, args, options) => {
+export const copyFile = async (command, currentDirPath, args, options) => {
   const { move } = options;
   
   try {
     if (args.length !== 2) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects two arguments!`);
     } else {
-      const filePath = args[0];
-      const absoluteSrcPath = getAbsolutePath(currentDirPath, filePath);
-      const srcFileName = parse(absoluteSrcPath).base;
+      const srcFilePath = args[0];
+      const absoluteSrcPath = getAbsolutePath(currentDirPath, srcFilePath);
       const srcDirName = dirname(absoluteSrcPath);
+      const srcFileName = basename(absoluteSrcPath);
 
       const newDirPath = args[1];
       const absoluteNewDirPath = getAbsolutePath(currentDirPath, newDirPath);
@@ -48,12 +48,12 @@ export const copyFile = async (currentDirPath, args, options) => {
           rs,
           ws);
 
-        if (!move) {
-          console.log(`File ${srcFileName} was successfully copied from directory ${srcDirName} to directory ${absoluteNewDirPath}!`);
-        } else {
-          await rm(absoluteSrcPath);
-          console.log(`File ${srcFileName} was successfully moved from directory ${srcDirName} to directory ${absoluteNewDirPath}!`);
-        }
+        const operation = move ? 'moved' : 'copied';
+        const successMessage = `File ${srcFileName} was successfully ${operation} from directory ${srcDirName} to directory ${absoluteNewDirPath}!`;
+
+        if (move) await rm(absoluteSrcPath);
+
+        console.log(successMessage);
       }
     }
   } catch (error) {

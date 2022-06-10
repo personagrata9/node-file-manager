@@ -2,10 +2,10 @@ import { readdir } from 'fs/promises';
 import { checkDirExist } from '../utils/checkDirExist.js';
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const list = async (currentDirPath, args) => {
+export const list = async (command, currentDirPath, args) => {
   try {
     if (args.length) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects no arguments!`);
     } else {
       const isDirExist = await checkDirExist(currentDirPath);
 

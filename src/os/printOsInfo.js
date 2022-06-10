@@ -3,10 +3,10 @@ import { parseCpusInfo } from './parseCpusInfo.js';
 import { ERROR_MESSAGE } from '../consts/messages.js';
 import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
 
-export const printOsInfo = (args) => {
+export const printOsInfo = (command, args) => {
   try {
     if (args.length !== 1) {
-      throw new Error(INVALID_INPUT_MESSAGE);
+      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects one argument!`);
     } else {
       const arg = args.join('');
 
