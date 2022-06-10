@@ -8,6 +8,7 @@ import { renameFile } from '../files_operations/rn.js';
 import { copyFile } from '../files_operations/cp.js';
 import { moveFile } from '../files_operations/mv.js';
 import { deleteFile } from '../files_operations/rm.js';
+import { printOsInfo } from '../os/printOsInfo.js';
 import { INVALID_INPUT_MESSAGE } from '../constants/invalidInputMessage.js';
 
 export const parseCli = async (input) => {
@@ -47,6 +48,9 @@ export const parseCli = async (input) => {
       break;
     case 'rm':
       await deleteFile(currentDirPath, args, false);
+      break;
+    case 'os':
+      printOsInfo(args);
       break;
     default:
       console.error(`${INVALID_INPUT_MESSAGE}: command not found!`);
