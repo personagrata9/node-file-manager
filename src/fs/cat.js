@@ -3,7 +3,8 @@ import { createReadStream } from 'fs';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
-import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
+import { checkDirentReadable } from '../utils/checkDirentReadable.js';
+import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE, PERMISSION_ERROR_MESSAGE } from '../consts/messages.js';
 
 const getFileContent = (filePath) => {
   const rs = createReadStream(filePath, { encoding: 'utf-8' });
@@ -28,11 +29,14 @@ export const readFile = async (command, currentDirPath, args) => {
 
       const isFileExist = await checkDirentExist(absoluteFilePath);
       const isFile = await checkFileExist(absoluteFilePath);
+      const isFileReadable = await checkDirentReadable(absoluteFilePath);
 
       if (!isFileExist) {
         throw new Error(`${ERROR_MESSAGE}: ${absoluteFilePath} doesn't exist!`);
       } else if (!isFile) {
         throw new Error(`${ERROR_MESSAGE}: ${fileName} is not a file!`);
+      } else if (!isFileReadable) {
+        throw new Error(PERMISSION_ERROR_MESSAGE);
       } else {
         const content = await getFileContent(absoluteFilePath);
         if (content) console.log(content);

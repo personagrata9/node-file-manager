@@ -8,7 +8,9 @@ export const INVALID_INPUT_MESSAGE = 'Invalid input';
 
 export const ERROR_MESSAGE = 'Operation failed';
 
-export const INVALID_FILE_NAME_MESSAGE = `File name shouldn't contain specifil symbols:
+export const PERMISSION_ERROR_MESSAGE = `${ERROR_MESSAGE}: not permitted!`;
+
+export const INVALID_FILE_NAME_MESSAGE = `${ERROR_MESSAGE}: file name shouldn't contain specifil symbols:
 < (less than)
 > (greater than)
 : (colon - sometimes works, but is actually NTFS Alternate Data Streams)

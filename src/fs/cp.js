@@ -6,7 +6,9 @@ import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
 import { checkDirExist } from '../utils/checkDirExist.js';
-import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
+import { checkDirentReadable } from '../utils/checkDirentReadable.js';
+import { checkDirentWritable } from '../utils/checkDirentWritable.js';
+import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE, PERMISSION_ERROR_MESSAGE } from '../consts/messages.js';
 
 export const copyFile = async (command, currentDirPath, args, options) => {
   const { move } = options;
@@ -26,8 +28,11 @@ export const copyFile = async (command, currentDirPath, args, options) => {
 
       const isSrcExist = await checkDirentExist(absoluteSrcPath);
       const isSrcFile = await checkFileExist(absoluteSrcPath);
+      const isSrcFileReadable = await checkDirentReadable(absoluteSrcPath);
+
       const isNewDirExist = await checkDirentExist(absoluteNewDirPath);
       const isDestDirectory = await checkDirExist(absoluteNewDirPath);
+      const isDestDirWritable = await checkDirentWritable(absoluteNewDirPath);
       const isDestExist = await checkDirentExist(absoluteDestPath);
 
       if (!isSrcExist) {
@@ -38,6 +43,8 @@ export const copyFile = async (command, currentDirPath, args, options) => {
         throw new Error(`${ERROR_MESSAGE}: ${absoluteNewDirPath} doesn't exist!`);
       } else if (!isDestDirectory) {
         throw new Error(`${ERROR_MESSAGE}: ${absoluteNewDirPath} is not a directory!`);
+      } else if (!isSrcFileReadable || !isDestDirWritable) {
+        throw new Error(PERMISSION_ERROR_MESSAGE);
       } else if (isDestExist) {
         throw new Error(`${ERROR_MESSAGE}: file ${srcFileName} is already exist in directory${absoluteNewDirPath}!`);
       } else {

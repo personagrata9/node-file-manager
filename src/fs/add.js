@@ -26,6 +26,6 @@ export const createFile = async (command, currentDirPath, args) => {
       }
     }
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
   }
 };

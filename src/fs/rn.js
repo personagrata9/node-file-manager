@@ -3,8 +3,9 @@ import { rename } from 'fs/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
+import { checkDirentReadable } from '../utils/checkDirentReadable.js';
 import { validateFileName } from '../utils/validateFileName.js';
-import { ERROR_MESSAGE, INVALID_FILE_NAME_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
+import { ERROR_MESSAGE, INVALID_FILE_NAME_MESSAGE, INVALID_INPUT_MESSAGE, PERMISSION_ERROR_MESSAGE } from '../consts/messages.js';
 
 export const renameFile = async (command, currentDirPath, args) => {
   try {
@@ -21,6 +22,8 @@ export const renameFile = async (command, currentDirPath, args) => {
 
       const isFileExist = await checkDirentExist(absoluteFilePath);
       const isFile = await checkFileExist(absoluteFilePath);
+      const isFileReadable = await checkDirentReadable(absoluteFilePath);
+
       const isNewFileNameValid = validateFileName(newFileName);
       const isFileRenamed = await checkDirentExist(absoluteNewFilePath);
 
@@ -28,6 +31,8 @@ export const renameFile = async (command, currentDirPath, args) => {
         throw new Error(`${ERROR_MESSAGE}: ${absoluteFilePath} doesn't exist!`);
       } else if (!isFile) {
         throw new Error(`${ERROR_MESSAGE}: ${fileName} is not a file!`);
+      } else if (!isFileReadable) {
+        throw new Error(PERMISSION_ERROR_MESSAGE);
       } else if (!isNewFileNameValid) {
         throw new Error(INVALID_FILE_NAME_MESSAGE);
       } else if (isFileRenamed) {
