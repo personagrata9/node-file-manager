@@ -1,7 +1,8 @@
 import { basename, dirname, extname } from 'path';
-import { createReadStream, createWriteStream} from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import { createBrotliDecompress } from 'zlib';
 import { pipeline } from 'stream/promises';
+import { rm } from 'fs/promises';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
@@ -44,8 +45,8 @@ export const decompress = async (command, currentDirPath, args) => {
         throw new Error(`${ERROR_MESSAGE}: ${absoluteSrcPath} doesn't exist!`);
       } else if (!isSrcFile) {
         throw new Error(`${ERROR_MESSAGE}: ${srcFileName} is not a file!`);
-      } else if (srcExtName !== extName) {
-        throw new Error(`${ERROR_MESSAGE}: source file extension shoud be ${extName}!`);
+      } else if (srcExtName.toLowerCase() !== extName) {
+        throw new Error(`${ERROR_MESSAGE}: source file extension shoud be ${extName} or ${extName.toUpperCase()}!`);
       } else if (!isDestDirExist) {
         throw new Error(`${ERROR_MESSAGE}: directory ${absoluteDestDirPath} doesn't exist!`);
       } else if (!isDestDirectory) {
@@ -56,7 +57,7 @@ export const decompress = async (command, currentDirPath, args) => {
         throw new Error(INVALID_FILE_NAME_MESSAGE);
       } else if (destExtName !== srcBaseExtName) {
         const errorMessage = srcBaseExtName
-          ? `${ERROR_MESSAGE}: destination file extension shoud be ${srcBaseExtName}!`
+          ? `${ERROR_MESSAGE}: destination file extension shoud be ${srcBaseExtName.toLowerCase()} or ${srcBaseExtName.toUpperCase()}!`
           : `${ERROR_MESSAGE}: destination file shouldn't have an extension!`;
 
         throw new Error(errorMessage);
@@ -65,13 +66,14 @@ export const decompress = async (command, currentDirPath, args) => {
       } else {
         const rs = createReadStream(absoluteSrcPath);
         const ws = createWriteStream(absoluteDestFilePath);
+
         const brotliDecompress = createBrotliDecompress();
         
-        await pipeline(
-          rs,
-          brotliDecompress,
-          ws
-        );
+        await pipeline( rs, brotliDecompress, ws)
+          .catch(async () => {
+            await rm(absoluteDestFilePath);
+            throw new Error(`${ERROR_MESSAGE}: file ${srcFileName} isn't an archive!`);
+          });
 
         console.log(`File ${srcFileName} was successfully decompressed with name ${destFileName} to directory ${absoluteDestDirPath}!`);
       }

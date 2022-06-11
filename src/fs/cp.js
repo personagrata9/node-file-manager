@@ -51,9 +51,10 @@ export const copyFile = async (command, currentDirPath, args, options) => {
         const rs = createReadStream(absoluteSrcPath);
         const ws = createWriteStream(absoluteDestPath);
         
-        await pipeline(
-          rs,
-          ws);
+        await pipeline( rs, ws)
+          .catch(() => {
+            throw new Error(ERROR_MESSAGE);
+          });
 
         const operation = move ? 'moved' : 'copied';
         const successMessage = `File ${srcFileName} was successfully ${operation} from directory ${srcDirName} to directory ${absoluteNewDirPath}!`;

@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { createWriteStream } from 'fs';
+import { writeFile } from 'fs/promises';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { validateFileName } from '../utils/validateFileName.js';
 import { ERROR_MESSAGE, INVALID_FILE_NAME_MESSAGE, INVALID_INPUT_MESSAGE } from '../consts/messages.js';
@@ -20,9 +20,8 @@ export const createFile = async (command, currentDirPath, args) => {
       } else if (!isNewFileNameValid) {
         throw new Error(INVALID_FILE_NAME_MESSAGE);
       } else {
-        const ws = createWriteStream(newFilePath);
+        await writeFile(newFilePath);
         console.log(`File ${newFileName} was successfully created in directory ${currentDirPath}!`);
-        ws.close();
       }
     }
   } catch (error) {
