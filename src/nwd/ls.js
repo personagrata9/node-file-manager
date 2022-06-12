@@ -1,20 +1,25 @@
 import { readdir } from 'fs/promises';
+import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkDirExist } from '../utils/checkDirExist.js';
 import { checkDirentReadable } from '../utils/checkDirentReadable.js';
-import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE, PERMISSION_ERROR_MESSAGE } from '../consts/messages.js';
+import { DirentNotExistError, InputError, NotDirectoryError, PermissionError } from '../utils/customErrors.js';
+import { NO_ARGS_MESSAGE } from '../consts/messages.js';
 
-export const list = async (command, currentDirPath, args) => {
+export const list = async (currentDirPath, args) => {
   try {
     if (args.length) {
-      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects no arguments!`);
+      throw new InputError(NO_ARGS_MESSAGE);
     } else {
-      const isDirExist = await checkDirExist(currentDirPath);
-      const isDirReadable = checkDirentReadable(currentDirPath);
+      const isDirentExist = await checkDirentExist(currentDirPath);
+      const isDirectory = await checkDirExist(currentDirPath);
+      const isDirReadable = await checkDirentReadable(currentDirPath);
 
-      if (!isDirExist) {
-        throw new Error(`${ERROR_MESSAGE}: directory doesn't exist!`);
+      if (!isDirentExist) {
+        throw new DirentNotExistError(currentDirPath);
+      } else if (!isDirectory) {
+        throw new NotDirectoryError(currentDirPath);
       } else if (!isDirReadable) {
-        throw new Error(PERMISSION_ERROR_MESSAGE);
+        throw new PermissionError();
       } else {
         const dirents = await readdir(currentDirPath, { withFileTypes: true });
         const result = dirents.map((dirent) => dirent.name);
@@ -22,6 +27,6 @@ export const list = async (command, currentDirPath, args) => {
       }
     }
   } catch (error) {
-    console.error(error.message);
+    throw error;
   }
 };

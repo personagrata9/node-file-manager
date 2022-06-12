@@ -1,9 +1,14 @@
-import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
+import { NO_ARGS_MESSAGE } from '../consts/messages.js';
+import { InputError } from '../utils/customErrors.js';
 
-export const exit = (command, args) => {
-  if (args.length) {
-    console.error(`${INVALID_INPUT_MESSAGE}: command ${command} expects no arguments!`);
-  } else {
-    process.exit();
+export const exit = (args) => {
+  try {
+    if (args.length) {
+      throw new InputError(NO_ARGS_MESSAGE);
+    } else {
+      process.exit();
+    }
+  } catch (error) {
+    throw error;
   }
 };

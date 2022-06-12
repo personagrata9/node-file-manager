@@ -4,7 +4,8 @@ import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
 import { checkDirentReadable } from '../utils/checkDirentReadable.js';
-import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE, PERMISSION_ERROR_MESSAGE } from '../consts/messages.js';
+import { DirentNotExistError, InputError, NotFileError, PermissionError } from '../utils/customErrors.js';
+import { ONE_ARG_MESSAGE } from '../consts/messages.js';
 
 const { createHash } = await import('crypto');
 
@@ -21,14 +22,14 @@ const calculateHash = (filePath) => {
 
         resolve(result);
       });
-      rs.on('error', () => reject(new Error(ERROR_MESSAGE)));
+      rs.on('error', reject);
   });
 };
 
-export const printHash = async (command, currentDirPath, args) => {
+export const printHash = async (currentDirPath, args) => {
   try {
     if (args.length !== 1) {
-      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects one argument!`);
+      throw new InputError(ONE_ARG_MESSAGE);
     } else {
       const filePath = args[0];
       const absoluteFilePath = getAbsolutePath(currentDirPath, filePath);
@@ -39,17 +40,17 @@ export const printHash = async (command, currentDirPath, args) => {
       const isFileReadable = await checkDirentReadable(absoluteFilePath);
 
       if (!isFileExist) {
-        throw new Error(`${ERROR_MESSAGE}: ${isFileExist} doesn't exist!`);
+        throw new DirentNotExistError(absoluteFilePath);
       } else if (!isFile) {
-        throw new Error(`${ERROR_MESSAGE}: ${fileName} is not a file!`);
+        throw new NotFileError(fileName);
       } else if (!isFileReadable) {
-        throw new Error(PERMISSION_ERROR_MESSAGE);
+        throw new PermissionError();
       } else {
         const hash = await calculateHash(absoluteFilePath);
         if (hash) console.log(hash);
       }
     }
   } catch (error) {
-    console.error(error.message);
+    throw error;
   }
 };

@@ -8,14 +8,22 @@ import { checkFileExist } from '../utils/checkFileExist.js';
 import { checkDirExist } from '../utils/checkDirExist.js';
 import { checkDirentReadable } from '../utils/checkDirentReadable.js';
 import { checkDirentWritable } from '../utils/checkDirentWritable.js';
-import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE, PERMISSION_ERROR_MESSAGE } from '../consts/messages.js';
+import {
+  DirentNotExistError,
+  FileAlreadyExistError,
+  InputError,
+  NotDirectoryError,
+  NotFileError,
+  PermissionError
+} from '../utils/customErrors.js';
+import { TWO_ARGS_MESSAGE } from '../consts/messages.js';
 
-export const copyFile = async (command, currentDirPath, args, options) => {
+export const copyFile = async (currentDirPath, args, options) => {
   const { move } = options;
   
   try {
     if (args.length !== 2) {
-      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects two arguments!`);
+      throw new InputError(TWO_ARGS_MESSAGE);
     } else {
       const srcFilePath = args[0];
       const absoluteSrcPath = getAbsolutePath(currentDirPath, srcFilePath);
@@ -36,35 +44,32 @@ export const copyFile = async (command, currentDirPath, args, options) => {
       const isDestExist = await checkDirentExist(absoluteDestPath);
 
       if (!isSrcExist) {
-        throw new Error(`${ERROR_MESSAGE}: ${absoluteSrcPath} doesn't exist!`);
+        throw new DirentNotExistError(absoluteSrcPath);
       } else if (!isSrcFile) {
-        throw new Error(`${ERROR_MESSAGE}: ${srcFileName} is not a file!`);
+        throw new NotFileError(srcFileName);
       } else if (!isNewDirExist) {
-        throw new Error(`${ERROR_MESSAGE}: ${absoluteNewDirPath} doesn't exist!`);
+        throw new DirentNotExistError(absoluteNewDirPath);
       } else if (!isDestDirectory) {
-        throw new Error(`${ERROR_MESSAGE}: ${absoluteNewDirPath} is not a directory!`);
+        throw new NotDirectoryError(absoluteNewDirPath);
       } else if (!isSrcFileReadable || !isDestDirWritable) {
-        throw new Error(PERMISSION_ERROR_MESSAGE);
+        throw new PermissionError();
       } else if (isDestExist) {
-        throw new Error(`${ERROR_MESSAGE}: file ${srcFileName} is already exist in directory${absoluteNewDirPath}!`);
+        throw new FileAlreadyExistError(srcFileName, absoluteNewDirPath);
       } else {
         const rs = createReadStream(absoluteSrcPath);
         const ws = createWriteStream(absoluteDestPath);
         
-        await pipeline( rs, ws)
-          .catch(() => {
-            throw new Error(ERROR_MESSAGE);
-          });
+        await pipeline(rs, ws);
 
         const operation = move ? 'moved' : 'copied';
-        const successMessage = `File ${srcFileName} was successfully ${operation} from directory ${srcDirName} to directory ${absoluteNewDirPath}!`;
+        const successMessage = `File '${srcFileName}' was successfully ${operation} from directory '${srcDirName}' to directory '${absoluteNewDirPath}'!`;
 
         if (move) await rm(absoluteSrcPath);
 
         console.log(successMessage);
       }
-    }
+    } 
   } catch (error) {
-    console.error(error.message);
+    throw error;
   }
 };

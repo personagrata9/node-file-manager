@@ -1,18 +1,19 @@
-import { dirname } from 'path';
-import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
+import { goToDir } from './cd.js';
+import { InputError } from '../utils/customErrors.js';
+import { NO_ARGS_MESSAGE } from '../consts/messages.js';
 
-export const goUp = (command, currentDirPath, args) => {
+export const goUp = async (currentDirPath, args) => {
   let newDirPath;
 
   try {
     if (args.length) {
       newDirPath = currentDirPath;
-      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects no arguments!`);
+      throw new InputError(NO_ARGS_MESSAGE);
     } else {
-      newDirPath = dirname(currentDirPath);
+      newDirPath = goToDir(currentDirPath, ['../']);
     }
   } catch (error) {
-    console.error(error.message);
+    throw error;
   }
 
   return newDirPath;

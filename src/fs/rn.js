@@ -5,12 +5,20 @@ import { checkDirentExist } from '../utils/checkDirentExist.js';
 import { checkFileExist } from '../utils/checkFileExist.js';
 import { checkDirentReadable } from '../utils/checkDirentReadable.js';
 import { validateFileName } from '../utils/validateFileName.js';
-import { ERROR_MESSAGE, INVALID_FILE_NAME_MESSAGE, INVALID_INPUT_MESSAGE, PERMISSION_ERROR_MESSAGE } from '../consts/messages.js';
+import {
+  DirentNotExistError,
+  FileNameIsTakenError,
+  InputError,
+  InvalidFileNameError,
+  NotFileError,
+  PermissionError
+} from '../utils/customErrors.js';
+import { TWO_ARGS_MESSAGE } from '../consts/messages.js';
 
-export const renameFile = async (command, currentDirPath, args) => {
+export const renameFile = async (currentDirPath, args) => {
   try {
     if (args.length !== 2) {
-      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects two arguments!`);
+      throw new InputError(TWO_ARGS_MESSAGE);
     } else {
       const filePath = args[0];
       const absoluteFilePath = getAbsolutePath(currentDirPath, filePath);
@@ -25,24 +33,24 @@ export const renameFile = async (command, currentDirPath, args) => {
       const isFileReadable = await checkDirentReadable(absoluteFilePath);
 
       const isNewFileNameValid = validateFileName(newFileName);
-      const isFileRenamed = await checkDirentExist(absoluteNewFilePath);
+      const isNewFileExist = await checkDirentExist(absoluteNewFilePath);
 
       if (!isFileExist) {
-        throw new Error(`${ERROR_MESSAGE}: ${absoluteFilePath} doesn't exist!`);
+        throw new DirentNotExistError(absoluteFilePath);
       } else if (!isFile) {
-        throw new Error(`${ERROR_MESSAGE}: ${fileName} is not a file!`);
+        throw new NotFileError(fileName);
       } else if (!isFileReadable) {
-        throw new Error(PERMISSION_ERROR_MESSAGE);
+        throw new PermissionError();
       } else if (!isNewFileNameValid) {
-        throw new Error(INVALID_FILE_NAME_MESSAGE);
-      } else if (isFileRenamed) {
-        throw new Error(`${ERROR_MESSAGE}: name ${newFileName} is already taken, please choose a different name!`);
+        throw new InvalidFileNameError();
+      } else if (isNewFileExist) {
+        throw new FileNameIsTakenError(newFileName);
       } else {
         await rename(absoluteFilePath, absoluteNewFilePath);
-        console.log(`File ${fileName} in directory ${dirName} was successfully renamed to ${newFileName}!`);
+        console.log(`File '${fileName}' in directory '${dirName}' was successfully renamed to '${newFileName}'!`);
       }
     }
   } catch (error) {
-    console.error(error.message);
+    throw error;
   }
 };

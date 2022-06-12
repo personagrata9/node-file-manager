@@ -1,12 +1,12 @@
 import { EOL, cpus, homedir, userInfo, arch } from 'os';
 import { parseCpusInfo } from './parseCpusInfo.js';
-import { ERROR_MESSAGE } from '../consts/messages.js';
-import { INVALID_INPUT_MESSAGE } from '../consts/messages.js';
+import { InputError, OperationError } from '../utils/customErrors.js';
+import { ONE_ARG_MESSAGE } from '../consts/messages.js';
 
-export const printOsInfo = (command, args) => {
+export const printOsInfo = (args) => {
   try {
     if (args.length !== 1) {
-      throw new Error(`${INVALID_INPUT_MESSAGE}: command ${command} expects one argument!`);
+      throw new InputError(ONE_ARG_MESSAGE);
     } else {
       const arg = args.join('');
 
@@ -29,12 +29,12 @@ export const printOsInfo = (command, args) => {
           result = arch();
           break;
         default:
-          throw new Error(ERROR_MESSAGE);
+          throw new OperationError('invalid argument');
       }
 
       if (result) console.log(result);
     }
   } catch (error) {
-    console.error(error.message);
+    throw error;
   }
 };
