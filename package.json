@@ -1,0 +1,21 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "This repository is a solution to RS School task https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/file-manager/assignment.md",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/personagrata9/file-manager.git"
+  },
+  "author": "personagrata9",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/personagrata9/file-manager/issues"
+  },
+  "homepage": "https://github.com/personagrata9/file-manager#readme"
+}
